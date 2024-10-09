@@ -30,10 +30,10 @@ steps:
 
   - script: |
       pip install pytest pytest-azurepipelines
-      pytest -v --junitxml=junit/test-results.xml --cov-report=xml --cov=src --cov-report=html
+      pytest -v --junitxml=junit/test-results.xml --cov-report=xml --cov=src
     displayName: pytest
 
-  - task: PublishCodeCoverageResults@1
+  - task: PublishCodeCoverageResults@2
     displayName: Publish Cobertura Coverage Report
     inputs:
       codeCoverageTool: Cobertura
