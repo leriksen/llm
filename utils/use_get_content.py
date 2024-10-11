@@ -1,6 +1,4 @@
 from src.get_content import get_content
-from src.tokenizerv1 import tokenize_file
-
 import pathlib
 
 url = ("https://raw.githubusercontent.com/rasbt/"
@@ -9,5 +7,3 @@ url = ("https://raw.githubusercontent.com/rasbt/"
 file_path = pathlib.Path("the-verdict.txt")
 
 get_content(url, file_path)
-
-tokens: list[str] = tokenize_file(file_path)
