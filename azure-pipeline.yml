@@ -5,8 +5,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
+  pythonVersion: 3.12
   pipDownloadDir: $(Pipeline.Workspace)/.pip
-  pipInstallDir: /home/vsts/.cache/pip
+  pipCacheDir: /home/vsts/.cache/pip
 
 stages:
   - stage: build
@@ -16,8 +17,21 @@ stages:
         steps:
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: 3.12
-            displayName: Use Python 3.12
+              versionSpec: $(pythonVersion)
+            displayName: Use Python $(pythonVersion)
+
+          - script: |
+              export PYVER=$(python -c "import platform; print(platform.python_version())")
+              echo "##vso[task.setvariable variable=pythonVersion;]${PYVER}"
+            displayName: Set specific version
+
+          - script: |
+              echo "pythonVersion == $(pythonVersion)"
+            displayName: Show specific version
+
+          - script: |
+              export PYINSTALL="/opt/hostedtoolcache/Python/$(pythonVersion)/x64/lib/python$(pythonVersion)/site-packages"
+              echo "##vso[task.setvariable variable=pythonInstall;]${PYINSTALL}"
 
           - task: Cache@2
             inputs:
@@ -30,10 +44,19 @@ stages:
 
           - task: Cache@2
             inputs:
+              key: 'pip cache | "$(Agent.OS)" | requirements.txt'
+              restoreKeys: |
+                pip install | "$(Agent.OS)"
+              path: $(pipCacheDir)
+              cacheHitVar: pipCacheRestored
+            displayName: Cache pip installs
+
+          - task: Cache@2
+            inputs:
               key: 'pip installs | "$(Agent.OS)" | requirements.txt'
               restoreKeys: |
                 pip install | "$(Agent.OS)"
-              path: $(pipInstallDir)
+              path: $(pythonInstall)
               cacheHitVar: installCacheRestored
             displayName: Cache pip installs
 
@@ -51,6 +74,7 @@ stages:
               echo "pip cache dir == $(pip cache dir)"
               ls -al $(pipDownloadDir)
               echo "python version == $(python --version)"
+              echo "pytest == $(pytest --version)"
             displayName: Locations
 
           - script: |
