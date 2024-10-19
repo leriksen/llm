@@ -1,4 +1,4 @@
-from unittest.mock import patch, mock_open, Mock
+from unittest.mock import patch, mock_open
 
 from pathlib import Path
 
