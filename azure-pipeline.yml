@@ -48,7 +48,6 @@ stages:
             condition: eq(variables.installCacheRestored, 'false')
 
           - script: |
-              pip install pytest pytest-azurepipelines
               pytest -v --junitxml=junit/test-results.xml --cov-report=xml --cov=src
             displayName: pytest
 
