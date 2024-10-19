@@ -23,7 +23,7 @@ stages:
               key: 'pip | "$(Agent.OS)" | requirements.txt'
               restoreKeys: |
                 pip | "$(Agent.OS)"
-              path:
+              path: $(pipDownloadDir)
               cacheHitVar: cacheRestored
             displayName: Cache pip
 
