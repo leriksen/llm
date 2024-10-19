@@ -3,3 +3,4 @@ pytest-mock
 pytest-cov
 requests
 pytest-azurepipelines
+setuptools
