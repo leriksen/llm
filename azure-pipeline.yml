@@ -6,6 +6,7 @@ pool:
 
 variables:
   pipDownloadDir: $(Pipeline.Workspace)/.pip
+  pipInstallDir: /opt/hostedtoolcache/Python/3.12.7/x64/lib/python3.12/site-packages
 
 stages:
   - stage: build
@@ -24,21 +25,33 @@ stages:
               restoreKeys: |
                 pip | "$(Agent.OS)"
               path: $(pipDownloadDir)
-              cacheHitVar: cacheRestored
-            displayName: Cache pip
+              cacheHitVar: downloadCacheRestored
+            displayName: Cache pip downloads
+
+          - task: Cache@2
+            inputs:
+              key: 'pip | "$(Agent.OS)" | requirements.txt'
+              restoreKeys: |
+                pip | "$(Agent.OS)"
+              path: $(pipInstallDir)
+              cacheHitVar: installCacheRestored
+            displayName: Cache pip installs
 
           - script: |
               pip download -r requirements.txt --dest=$(pipDownloadDir)
             displayName: Download requirements
-            condition: eq(variables.cacheRestored, 'false')
+            condition: eq(variables.downloadCacheRestored, 'false')
 
           - script: |
               pip install -r requirements.txt --no-index --find-links=$(pipDownloadDir)
             displayName: Install requirements
+            condition: eq(variables.installCacheRestored, 'false')
 
           - script: |
-              pip list -v
+              "pip list -v == $(pip list -v)"
+              "pip cache dir == $(pip cache dir)"
               ls -al $(pipDownloadDir)
+              "python version == $(python --version)"
             displayName: Locations
 
           - task: ArchiveFiles@2
