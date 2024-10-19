@@ -36,6 +36,11 @@ stages:
               pip install -r requirements.txt --no-index --find-links=$(pipDownloadDir)
             displayName: Install requirements
 
+          - script: |
+              pip list -v
+              ls -al $(pipDownloadDir)
+            displayName: Locations
+
           - task: ArchiveFiles@2
             displayName: Archive files
             inputs:
