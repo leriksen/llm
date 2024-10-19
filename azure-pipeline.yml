@@ -48,27 +48,6 @@ stages:
             condition: eq(variables.installCacheRestored, 'false')
 
           - script: |
-              echo "pip list -v == $(pip list -v)"
-              echo "pip cache dir == $(pip cache dir)"
-              ls -al $(pipDownloadDir)
-              echo "python version == $(python --version)"
-            displayName: Locations
-
-          - task: ArchiveFiles@2
-            displayName: Archive files
-            inputs:
-              rootFolderOrFile: $(System.DefaultWorkingDirectory)
-              includeRootFolder: false
-              archiveType: zip
-              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-$(python.version).zip
-              replaceExistingArchive: true
-
-          - task: PublishBuildArtifacts@1
-            inputs:
-              PathtoPublish: $(Build.ArtifactStagingDirectory)
-              ArtifactName: pythonarchive
-
-          - script: |
               pip install pytest pytest-azurepipelines
               pytest -v --junitxml=junit/test-results.xml --cov-report=xml --cov=src
             displayName: pytest
@@ -79,3 +58,17 @@ stages:
               codeCoverageTool: Cobertura
               summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.xml
               reportDirectory: $(System.DefaultWorkingDirectory)/**/htmlcov
+
+          - task: ArchiveFiles@2
+            displayName: Archive files
+            inputs:
+              rootFolderOrFile: $(System.DefaultWorkingDirectory)
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-$(python --version).zip
+              replaceExistingArchive: true
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: $(Build.ArtifactStagingDirectory)
+              ArtifactName: pythonarchive
