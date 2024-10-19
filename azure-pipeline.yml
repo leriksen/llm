@@ -24,7 +24,7 @@ stages:
               restoreKeys: |
                 pip | "$(Agent.OS)"
               path:
-                  cacheHitVar: cacheRestored
+              cacheHitVar: cacheRestored
             displayName: Cache pip
 
           - script: |
