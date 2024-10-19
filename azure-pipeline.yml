@@ -45,14 +45,13 @@ stages:
           - script: |
               pip install -r requirements.txt --no-index --find-links=$(pipDownloadDir)
             displayName: Install requirements
-            condition: eq(variables.installCacheRestored, 'false')
 
           - script: |
               echo "pip list -v == $(pip list -v)"
               echo "pip cache dir == $(pip cache dir)"
               ls -al $(pipDownloadDir)
               echo "python version == $(python --version)"
-              displayName: Locations
+            displayName: Locations
 
           - script: |
               pytest -v --junitxml=junit/test-results.xml --cov-report=xml --cov=src
