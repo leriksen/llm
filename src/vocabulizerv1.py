@@ -5,9 +5,12 @@ from src.tokenizerv1 import tokenize_text
 
 class Vocabulizerv1:
   def __init__(self, vocab: list[str]):
-    self.str_to_int = { token:integer for integer, token in enumerate(vocab) }
-    self.int_to_str = { integer:token for integer, token in enumerate(vocab) }
+    self.str_to_int = {}
+    self.int_to_str = {}
 
+    for integer, token in enumerate(vocab):
+      self.str_to_int[token] = integer
+      self.int_to_str[integer] = token
 
   def encode(self, text: str) -> list[int]:
     tokens = tokenize_text(text)
